@@ -1,0 +1,5 @@
+Purchase Date: Sat Apr 13 18:06:47 EEST 2024
+Items:
+Banana - 5 x $0.79 = $3.95
+Apple - 2 x $0.99 = $1.98
+Total: $5.93
