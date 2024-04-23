@@ -7,6 +7,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 
+import java.util.Optional;
+
 public class ShopGUI extends Application {
     private ListView<Product> productListView;
     private ListView<String> cartListView;
@@ -25,7 +27,21 @@ public class ShopGUI extends Application {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.getName() + " - $" + item.getPrice());
+                    setText(item.getName() + " - $" + String.format("%.2f", item.getPrice()));
+                }
+            }
+        });
+
+        // Handle double-click events on products to add them to the cart
+        productListView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                Product selected = productListView.getSelectionModel().getSelectedItem();
+                if (selected != null) {
+                    int quantity = promptForQuantity("How many of " + selected.getName() + " would you like to add?");
+                    if (quantity > 0) {
+                        shoppingCart.addProduct(selected, quantity);
+                        updateCartDisplay();
+                    }
                 }
             }
         });
@@ -50,6 +66,20 @@ public class ShopGUI extends Application {
 
         // Initialize cart display after all components are in place
         updateCartDisplay();
+    }
+
+    private int promptForQuantity(String promptMessage) {
+        TextInputDialog dialog = new TextInputDialog("1");
+        dialog.setTitle("Quantity Input");
+        dialog.setHeaderText(null);
+        dialog.setContentText(promptMessage);
+        Optional<String> result = dialog.showAndWait();
+        try {
+            return result.map(Integer::parseInt).orElse(0);
+        } catch (NumberFormatException e) {
+            showAlert("Invalid Input", "Please enter a valid number.");
+            return 0;
+        }
     }
 
     private void updateCartDisplay() {
