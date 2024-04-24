@@ -1,0 +1,5 @@
+Purchase Date: Wed Apr 24 14:21:58 EEST 2024
+Items:
+Banana - $0.59 x 1 = $0.59
+Bread - $1.25 x 1 = $1.25
+Total: $1.8399999999999999

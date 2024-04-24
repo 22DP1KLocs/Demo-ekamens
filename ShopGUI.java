@@ -4,22 +4,27 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
-
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ShopGUI extends Application {
     private ListView<Product> productListView;
     private ListView<String> cartListView;
     private Label totalCostLabel;
+    private TextField searchField;
     private Button checkoutButton;
     private ShoppingCart shoppingCart = new ShoppingCart();
+    private HBox categoryButtons;
+    private String currentCategory = null; // Track the currently selected category
 
     @Override
     public void start(Stage primaryStage) {
-        // Initialize UI components
+        shoppingCart = new ShoppingCart();
         productListView = new ListView<>(FXCollections.observableArrayList(ProductManager.getAllProducts()));
+
         productListView.setCellFactory(param -> new ListCell<Product>() {
             @Override
             protected void updateItem(Product item, boolean empty) {
@@ -27,12 +32,11 @@ public class ShopGUI extends Application {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.getName() + " - $" + String.format("%.2f", item.getPrice()));
+                    setText(item.getName() + " - $" + String.format("%.2f", item.getPrice()) + " (" + item.getCategory() + ")");
                 }
             }
         });
 
-        // Handle double-click events on products to add them to the cart
         productListView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 Product selected = productListView.getSelectionModel().getSelectedItem();
@@ -49,23 +53,58 @@ public class ShopGUI extends Application {
         cartListView = new ListView<>();
         totalCostLabel = new Label("Total: $0.00");
         checkoutButton = new Button("Checkout");
-
-        // Set up VBox layout
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(15));
-        root.getChildren().addAll(new Label("Available Products:"), productListView, new Label("Your Cart:"), cartListView, totalCostLabel, checkoutButton);
-
-        // Configure checkout button action
         checkoutButton.setOnAction(e -> checkout());
 
-        // Set the scene and show the stage
+        searchField = new TextField();
+        searchField.setPromptText("Search for products...");
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            productListView.setItems(FXCollections.observableArrayList(ProductManager.searchProducts(newValue)));
+        });
+
+        setupCategoryButtons();
+
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(15));
+        root.getChildren().addAll(new Label("Search:"), searchField, categoryButtons, new Label("Available Products:"), productListView, new Label("Your Cart:"), cartListView, totalCostLabel, checkoutButton);
+
         Scene scene = new Scene(root, 400, 600);
         primaryStage.setTitle("Shop GUI");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Initialize cart display after all components are in place
         updateCartDisplay();
+    }
+
+    private void setupCategoryButtons() {
+        Set<String> categories = ProductManager.getAllProducts().stream()
+                                              .map(Product::getCategory)
+                                              .collect(Collectors.toSet());
+        categoryButtons = new HBox(10);
+        for (String category : categories) {
+            ToggleButton button = new ToggleButton(category);
+            button.setOnAction(e -> toggleCategoryFilter(button, category));
+            categoryButtons.getChildren().add(button);
+        }
+    }
+
+    private void toggleCategoryFilter(ToggleButton button, String category) {
+        if (currentCategory != null && currentCategory.equals(category) && button.isSelected()) {
+            // If the same category is re-selected, show all products
+            productListView.setItems(FXCollections.observableArrayList(ProductManager.getAllProducts()));
+            currentCategory = null;
+            button.setSelected(false);
+        } else {
+            // Filter products by the selected category
+            productListView.setItems(FXCollections.observableArrayList(
+                ProductManager.getAllProducts().stream()
+                              .filter(p -> p.getCategory().equals(category))
+                              .collect(Collectors.toList())
+            ));
+            currentCategory = category;
+            categoryButtons.getChildren().stream()
+                .filter(b -> b instanceof ToggleButton && b != button)
+                .forEach(b -> ((ToggleButton)b).setSelected(false));
+        }
     }
 
     private int promptForQuantity(String promptMessage) {
@@ -74,12 +113,7 @@ public class ShopGUI extends Application {
         dialog.setHeaderText(null);
         dialog.setContentText(promptMessage);
         Optional<String> result = dialog.showAndWait();
-        try {
-            return result.map(Integer::parseInt).orElse(0);
-        } catch (NumberFormatException e) {
-            showAlert("Invalid Input", "Please enter a valid number.");
-            return 0;
-        }
+        return result.map(Integer::parseInt).orElse(0);
     }
 
     private void updateCartDisplay() {
@@ -88,14 +122,13 @@ public class ShopGUI extends Application {
     }
 
     private void checkout() {
-        double total = shoppingCart.calculateTotal(); // Calculate total first
-        shoppingCart.saveCartToFile("/Users/kaspars/Desktop/Demo/purchases"); // Save cart before clearing
-        shoppingCart.checkout(); // Now it's safe to clear the cart
+        double total = shoppingCart.calculateTotal();
+        shoppingCart.saveCartToFile("/Users/kaspars/Desktop/Demo/purchases");
+        shoppingCart.checkout();
         totalCostLabel.setText("Total: $0.00");
         updateCartDisplay();
         showAlert("Checkout Complete", "The total cost was $" + String.format("%.2f", total));
     }
-    
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

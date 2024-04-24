@@ -1,0 +1,5 @@
+Purchase Date: Wed Apr 24 14:13:20 EEST 2024
+Items:
+Beef - $5.49 x 1 = $5.49
+Cheese - $2.5 x 1 = $2.5
+Total: $7.99

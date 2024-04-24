@@ -1,0 +1,4 @@
+Purchase Date: Wed Apr 24 14:55:39 EEST 2024
+Items:
+Orange - $0.79 x 1 = $0.79
+Total: $0.79
