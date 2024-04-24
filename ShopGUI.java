@@ -88,12 +88,14 @@ public class ShopGUI extends Application {
     }
 
     private void checkout() {
-        double total = shoppingCart.checkout();
+        double total = shoppingCart.calculateTotal(); // Calculate total first
+        shoppingCart.saveCartToFile("/Users/kaspars/Desktop/Demo/purchases"); // Save cart before clearing
+        shoppingCart.checkout(); // Now it's safe to clear the cart
         totalCostLabel.setText("Total: $0.00");
-        shoppingCart.saveCartToFile("/Users/kaspars/Desktop/Demo/purchases");
         updateCartDisplay();
         showAlert("Checkout Complete", "The total cost was $" + String.format("%.2f", total));
     }
+    
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
