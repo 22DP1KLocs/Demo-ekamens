@@ -16,6 +16,15 @@ public class ShoppingCart {
             cart.put(product, cart.getOrDefault(product, 0) + quantity);
         }
     }
+
+    public void removeProduct(Product product, int quantity) {
+        int currentQuantity = cart.getOrDefault(product, 0);
+        if (currentQuantity <= quantity) {
+            cart.remove(product);
+        } else {
+            cart.put(product, currentQuantity - quantity);
+        }
+    }
 // ! Methode for call culating the totall price of the product 
     public double calculateTotal() {
         return cart.entrySet().stream().mapToDouble(e -> e.getKey().getPrice() * e.getValue()).sum();
