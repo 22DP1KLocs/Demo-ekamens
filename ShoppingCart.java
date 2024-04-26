@@ -10,13 +10,13 @@ import javafx.collections.ObservableList;
 
 public class ShoppingCart {
     private Map<Product, Integer> cart = new HashMap<>();
-
+// ! add product methode 
     public void addProduct(Product product, int quantity) {
         if (product != null && quantity > 0) {
             cart.put(product, cart.getOrDefault(product, 0) + quantity);
         }
     }
-
+// ! Methode for call culating the totall price of the product 
     public double calculateTotal() {
         return cart.entrySet().stream().mapToDouble(e -> e.getKey().getPrice() * e.getValue()).sum();
     }
@@ -26,7 +26,7 @@ public class ShoppingCart {
         cart.clear(); // Clears the cart after checkout
         return total;
     }
-
+// ! allows listeners to track changes. Whenever items are added to or removed from the list
     public ObservableList<String> getCartContents() {
         ObservableList<String> contents = FXCollections.observableArrayList();
         for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
@@ -34,7 +34,7 @@ public class ShoppingCart {
         }
         return contents;
     }
-
+// ! Saves cart to the file direcctly 
     public void saveCartToFile(String folderPath) {
         File folder = new File(folderPath);
         if (!folder.exists()) {

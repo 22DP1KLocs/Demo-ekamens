@@ -1,7 +1,7 @@
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.ArrayList;
-
+// ! all products in list and there names, price and catagory 
 public class ProductManager {
     private static List<Product> products = new ArrayList<>();
     static {
@@ -16,11 +16,11 @@ public class ProductManager {
         products.add(new Product("Beef", 5.49, "Meat"));
         products.add(new Product("Water Bottle", 0.99, "Beverages"));
     }
-
+// ! returns all the the products list 
     public static List<Product> getAllProducts() {
         return new ArrayList<>(products);
     }
-
+// ! this methode is to search products through name 
     public static List<Product> searchProducts(String query) {
         return products.stream()
                        .filter(p -> p.getName().toLowerCase().contains(query.toLowerCase()))

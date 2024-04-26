@@ -36,7 +36,7 @@ public class ShopGUI extends Application {
                 }
             }
         });
-
+// !
         productListView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 Product selected = productListView.getSelectionModel().getSelectedItem();
@@ -67,7 +67,7 @@ public class ShopGUI extends Application {
         root.setPadding(new Insets(15));
         root.getChildren().addAll(new Label("Search:"), searchField, categoryButtons, new Label("Available Products:"), productListView, new Label("Your Cart:"), cartListView, totalCostLabel, checkoutButton);
 
-        Scene scene = new Scene(root, 400, 600);
+        Scene scene = new Scene(root, 400, 600); // ! sets the title and the scene
         primaryStage.setTitle("Shop GUI");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -106,7 +106,7 @@ public class ShopGUI extends Application {
                 .forEach(b -> ((ToggleButton)b).setSelected(false));
         }
     }
-
+// ! just to display promtp window , to choise quanty of the product ypu want 
     private int promptForQuantity(String promptMessage) {
         TextInputDialog dialog = new TextInputDialog("1");
         dialog.setTitle("Quantity Input");
@@ -115,12 +115,12 @@ public class ShopGUI extends Application {
         Optional<String> result = dialog.showAndWait();
         return result.map(Integer::parseInt).orElse(0);
     }
-
+// ! just updates cart's display whenever something changes
     private void updateCartDisplay() {
         cartListView.setItems(FXCollections.observableArrayList(shoppingCart.getCartContents()));
         totalCostLabel.setText("Total: $" + String.format("%.2f", shoppingCart.calculateTotal()));
     }
-
+// ! use of checkout methode to save file to an dictionary 
     private void checkout() {
         double total = shoppingCart.calculateTotal();
         shoppingCart.saveCartToFile("/Users/kaspars/Desktop/Demo/purchases");
