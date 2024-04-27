@@ -25,6 +25,23 @@ public class ShoppingCart {
             cart.put(product, currentQuantity - quantity);
         }
     }
+    public void removeProductByName(String productName) {
+        Product productToRemove = null;
+        for (Product product : cart.keySet()) {
+            if (product.getName().equals(productName)) {
+                productToRemove = product;
+                break;
+            }
+        }
+        if (productToRemove != null) {
+            int currentQuantity = cart.get(productToRemove);
+            if (currentQuantity > 1) {
+                cart.put(productToRemove, currentQuantity - 1);
+            } else {
+                cart.remove(productToRemove);
+            }
+        }
+    }
 // ! Methode for call culating the totall price of the product 
     public double calculateTotal() {
         return cart.entrySet().stream().mapToDouble(e -> e.getKey().getPrice() * e.getValue()).sum();

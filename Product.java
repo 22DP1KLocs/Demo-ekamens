@@ -1,5 +1,3 @@
-// ! this methode is for product main parametrs, this sets what is the values for each and this allows to catogorizes the products through these products 
-
 public class Product {
 	private String name;
 	private double price;
@@ -19,7 +17,7 @@ public class Product {
 			return price;
 	}
 
-	public String getCategory(){
-		return category;
+	public String getCategory() {
+			return category;
 	}
 }

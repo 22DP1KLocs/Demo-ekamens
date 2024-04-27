@@ -36,7 +36,7 @@ public class ShopGUI extends Application {
                 }
             }
         });
-// !
+
         productListView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 Product selected = productListView.getSelectionModel().getSelectedItem();
@@ -51,6 +51,24 @@ public class ShopGUI extends Application {
         });
 
         cartListView = new ListView<>();
+        cartListView.setItems(FXCollections.observableArrayList(shoppingCart.getCartContents()));
+        cartListView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                String selected = cartListView.getSelectionModel().getSelectedItem();
+                if (selected != null) {
+                    String productName = selected.split(" - ")[0];
+                    Product product = findProductByName(productName);
+                    if (product != null) {
+                        int quantityToRemove = promptForQuantity("How many of " + product.getName() + " would you like to remove?");
+                        if (quantityToRemove > 0) {
+                            shoppingCart.removeProduct(product, quantityToRemove);
+                            updateCartDisplay();
+                        }
+                    }
+                }
+            }
+        });
+
         totalCostLabel = new Label("Total: $0.00");
         checkoutButton = new Button("Checkout");
         checkoutButton.setOnAction(e -> checkout());
@@ -67,7 +85,7 @@ public class ShopGUI extends Application {
         root.setPadding(new Insets(15));
         root.getChildren().addAll(new Label("Search:"), searchField, categoryButtons, new Label("Available Products:"), productListView, new Label("Your Cart:"), cartListView, totalCostLabel, checkoutButton);
 
-        Scene scene = new Scene(root, 400, 600); // ! sets the title and the scene
+        Scene scene = new Scene(root, 400, 600);
         primaryStage.setTitle("Shop GUI");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -89,12 +107,10 @@ public class ShopGUI extends Application {
 
     private void toggleCategoryFilter(ToggleButton button, String category) {
         if (currentCategory != null && currentCategory.equals(category) && button.isSelected()) {
-            // If the same category is re-selected, show all products
             productListView.setItems(FXCollections.observableArrayList(ProductManager.getAllProducts()));
             currentCategory = null;
             button.setSelected(false);
         } else {
-            // Filter products by the selected category
             productListView.setItems(FXCollections.observableArrayList(
                 ProductManager.getAllProducts().stream()
                               .filter(p -> p.getCategory().equals(category))
@@ -106,7 +122,7 @@ public class ShopGUI extends Application {
                 .forEach(b -> ((ToggleButton)b).setSelected(false));
         }
     }
-// ! just to display promtp window , to choise quanty of the product ypu want 
+
     private int promptForQuantity(String promptMessage) {
         TextInputDialog dialog = new TextInputDialog("1");
         dialog.setTitle("Quantity Input");
@@ -115,12 +131,12 @@ public class ShopGUI extends Application {
         Optional<String> result = dialog.showAndWait();
         return result.map(Integer::parseInt).orElse(0);
     }
-// ! just updates cart's display whenever something changes
+
     private void updateCartDisplay() {
         cartListView.setItems(FXCollections.observableArrayList(shoppingCart.getCartContents()));
         totalCostLabel.setText("Total: $" + String.format("%.2f", shoppingCart.calculateTotal()));
     }
-// ! use of checkout methode to save file to an dictionary 
+
     private void checkout() {
         double total = shoppingCart.calculateTotal();
         shoppingCart.saveCartToFile("/Users/kaspars/Desktop/Demo/purchases");
@@ -136,6 +152,13 @@ public class ShopGUI extends Application {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private Product findProductByName(String name) {
+        return ProductManager.getAllProducts().stream()
+                             .filter(p -> p.getName().equals(name))
+                             .findFirst()
+                             .orElse(null);
     }
 
     public static void main(String[] args) {
