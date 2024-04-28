@@ -1,0 +1,4 @@
+Purchase Date: Sun Apr 28 18:53:56 EEST 2024
+Items:
+Chicken - $4.99 x 8 = $39.92
+Total: $39.92
