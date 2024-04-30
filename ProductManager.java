@@ -19,19 +19,19 @@ public class ProductManager {
         products.add(new Product("Water Bottle", 0.99, "Beverages"));
     }
 
-    //! Returns all products
+    // Returns all products
     public static List<Product> getAllProducts() {
         return new ArrayList<>(products);
     }
 
-    //! Filters products by category
+    // Filters products by category
     public static List<Product> filterProductsByCategory(String category) {
         return products.stream()
                        .filter(p -> p.getCategory().equalsIgnoreCase(category))
                        .collect(Collectors.toList());
     }
 
-    //! Finds a product by name
+    // Finds a product by name
     public static Product findProductByName(String name) {
         return products.stream()
                        .filter(p -> p.getName().equalsIgnoreCase(name))
@@ -39,7 +39,7 @@ public class ProductManager {
                        .orElse(null);
     }
 
-    //! Searches products based on a query (name contains query)
+    // Searches products based on a query (name contains query)
     public static List<Product> searchProducts(String query) {
         return products.stream()
                        .filter(p -> p.getName().toLowerCase().contains(query.toLowerCase()))
