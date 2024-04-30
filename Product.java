@@ -1,16 +1,25 @@
-public class Product {
-	private String name;
-	private double price;
-	private String category;
+import java.util.ResourceBundle;
 
-	public Product(String name, double price, String category) {
-			this.name = name;
+public class Product {
+	private String nameKey;
+	private double price;
+	private String categoryKey;
+	private String localizedName;
+	private String localizedCategory;
+
+	public Product(String nameKey, double price, String categoryKey) {
+			this.nameKey = nameKey;
 			this.price = price;
-			this.category = category;
+			this.categoryKey = categoryKey;
+	}
+
+	public void updateLocalization(ResourceBundle bundle) {
+			this.localizedName = bundle.getString(nameKey);
+			this.localizedCategory = bundle.getString(categoryKey);
 	}
 
 	public String getName() {
-			return name;
+			return localizedName;
 	}
 
 	public double getPrice() {
@@ -18,6 +27,6 @@ public class Product {
 	}
 
 	public String getCategory() {
-			return category;
+			return localizedCategory;
 	}
 }

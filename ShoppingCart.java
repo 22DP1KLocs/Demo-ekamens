@@ -32,7 +32,7 @@ public class ShoppingCart {
                 productToRemove = product;
                 break;
             }
-        }
+        } 
         if (productToRemove != null) {
             int currentQuantity = cart.get(productToRemove);
             if (currentQuantity > 1) {
