@@ -2,7 +2,7 @@ public class Product {
 	private String name;
 	private double price;
 	private String category;
-
+//! inatzilization of parametrs 
 	public Product(String name, double price, String category) {
 			this.name = name;
 			this.price = price;

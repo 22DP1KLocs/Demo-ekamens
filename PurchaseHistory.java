@@ -14,6 +14,7 @@ public class PurchaseHistory {
             System.err.println("Product list is empty or null.");
             return;
         }
+        
 // ! creates Dir for Purchases and checks if purchases Dir is already exsisting 
         File directory = new File(PURCHASES_DIR);
         if (!directory.exists()) {

@@ -16,7 +16,7 @@ public class ShoppingCart {
             cart.put(product, cart.getOrDefault(product, 0) + quantity);
         }
     }
-
+    // ! for removing products from cart 
     public void removeProduct(Product product, int quantity) {
         int currentQuantity = cart.getOrDefault(product, 0);
         if (currentQuantity <= quantity) {
@@ -25,6 +25,7 @@ public class ShoppingCart {
             cart.put(product, currentQuantity - quantity);
         }
     }
+    // ! for removing products from cart 
     public void removeProductByName(String productName) {
         Product productToRemove = null;
         for (Product product : cart.keySet()) {
@@ -47,8 +48,9 @@ public class ShoppingCart {
         return cart.entrySet().stream().mapToDouble(e -> e.getKey().getPrice() * e.getValue()).sum();
     }
 
-    public double checkout() {
+    public double checkout() { // just calculates 
         double total = calculateTotal();
+        PurchaseHistory.recordPurchase(cart, total);
         cart.clear(); // Clears the cart after checkout
         return total;
     }

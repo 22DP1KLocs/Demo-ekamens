@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// ! sets up all the methodes that going to be used 
 public class ShopGUI extends Application {
     private ListView<Product> productListView;
     private ListView<String> cartListView;
@@ -21,17 +22,19 @@ public class ShopGUI extends Application {
     private HBox languageButtons; // Buttons for language switching
     private Stage primaryStage;
 
+    // ! In javaFx you need to incilize primary stage, so that program starts 
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        shoppingCart = new ShoppingCart();
+        shoppingCart = new ShoppingCart(); // creats new shoping cart
         productListView = new ListView<>(FXCollections.observableArrayList(ProductManager.getAllProducts()));
 
-        // Load the default resource bundle
+        // !Load the default resource bundle
         resourceBundle = ResourceBundle.getBundle("MessagesBundle", Locale.getDefault());
         setupUI();
     }
 
+    // ! sets up , prduct view and basicly all below event's with whom user going to interact like adding and removing products
     private void setupUI() {
         productListView.setCellFactory(param -> new ListCell<Product>() {
             @Override
@@ -44,8 +47,8 @@ public class ShopGUI extends Application {
                 }
             }
         });
-
-        productListView.setOnMouseClicked(event -> {
+            // ! event for selecting and adding
+        productListView.setOnMouseClicked(event -> { 
             if (event.getClickCount() == 2) {
                 Product selected = productListView.getSelectionModel().getSelectedItem();
                 if (selected != null) {
@@ -65,7 +68,7 @@ public class ShopGUI extends Application {
             if (event.getClickCount() == 2) {
                 String selected = cartListView.getSelectionModel().getSelectedItem();
                 if (selected != null) {
-                    Product product = ProductManager.findProductByName(selected.split(" - ")[0]);
+                    Product product = ProductManager.findProductByName(selected.split(" - ")[0]); // ! methode to find product 
                     if (product != null) {
                         int quantityToRemove = promptForQuantity(resourceBundle.getString("removeQuantity") + product.getName());
                         if (quantityToRemove > 0) {
@@ -80,28 +83,30 @@ public class ShopGUI extends Application {
         totalCostLabel = new Label(resourceBundle.getString("totalLabel") + " $0.00");
         checkoutButton = new Button(resourceBundle.getString("checkoutButton"));
         checkoutButton.setOnAction(e -> checkout());
-
+        
+        //! makees search esier so that you don't have to search by full name 
         searchField = new TextField();
         searchField.setPromptText(resourceBundle.getString("searchPrompt"));
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             productListView.setItems(FXCollections.observableArrayList(ProductManager.searchProducts(newValue)));
         });
 
-        setupCategoryButtons();
-        setupLanguageButtons(); // Setup language selection buttons
+        setupCategoryButtons();//! Setup category selection buttons
+        setupLanguageButtons(); //! Setup language selection buttons
 
-        VBox root = new VBox(10);
+        VBox root = new VBox(10); // ! creat's fields for buttons 
         root.setPadding(new Insets(15));
         root.getChildren().addAll(languageButtons, new Label(resourceBundle.getString("searchLabel")), searchField, categoryButtons, new Label(resourceBundle.getString("productsLabel")), productListView, new Label(resourceBundle.getString("cartLabel")), cartListView, totalCostLabel, checkoutButton);
 
-        Scene scene = new Scene(root, 400, 600);
+        Scene scene = new Scene(root, 400, 600); // ! sets up scenes width and height
         primaryStage.setTitle(resourceBundle.getString("windowTitle"));
         primaryStage.setScene(scene);
-        primaryStage.show();
+        primaryStage.show(); // shows scene 
 
         updateCartDisplay();
     }
 
+    // ! setup for category button 
     private void setupCategoryButtons() {
         Set<String> categories = ProductManager.getAllProducts().stream()
             .map(Product::getCategory)
@@ -116,10 +121,11 @@ public class ShopGUI extends Application {
                     productListView.setItems(FXCollections.observableArrayList(ProductManager.getAllProducts()));
                 }
             });
-            categoryButtons.getChildren().add(button);
+            categoryButtons.getChildren().add(button); // add's button 
         });
     }
 
+    // ! setup for lenguges button 
     private void setupLanguageButtons() {
         languageButtons = new HBox(10);
         String[] languages = {"English", "Spanish", "Latvian"};
@@ -133,10 +139,11 @@ public class ShopGUI extends Application {
                 resourceBundle = ResourceBundle.getBundle("MessagesBundle", locale);
                 setupUI();
             });
-            languageButtons.getChildren().add(langButton);
+            languageButtons.getChildren().add(langButton); // add's button
         }
     }
 
+    // ! sets up prompt , so user can choise quantaty 
     private int promptForQuantity(String promptMessage) {
         TextInputDialog dialog = new TextInputDialog("1");
         dialog.setTitle(resourceBundle.getString("quantityTitle"));
@@ -151,11 +158,12 @@ public class ShopGUI extends Application {
         }
     }
 
+    // ! for updating the cart when somthing is add'et or delited 
     private void updateCartDisplay() {
         cartListView.setItems(FXCollections.observableArrayList(shoppingCart.getCartContents()));
         totalCostLabel.setText(resourceBundle.getString("totalLabel") + " $" + String.format("%.2f", shoppingCart.calculateTotal()));
     }
-
+    // ! setup for check out uses methode from shoppingCart to save files 
     private void checkout() {
         double total = shoppingCart.calculateTotal();
         shoppingCart.checkout();
@@ -163,6 +171,7 @@ public class ShopGUI extends Application {
         showAlert(resourceBundle.getString("checkoutComplete"), resourceBundle.getString("totalCost") + " $" + String.format("%.2f", total));
     }
 
+    // ! setups alerts,subclass of dialog 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -171,7 +180,7 @@ public class ShopGUI extends Application {
         alert.showAndWait();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { // ! lunch argument 
         launch(args);
     }
 }

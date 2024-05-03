@@ -1,0 +1,6 @@
+Purchase Date: Tue Apr 30 16:59:16 EEST 2024
+Items:
+Apple - 1 x $0.99 = $0.99
+Milk - 2 x $1.50 = $3.00
+Bread - 1 x $1.25 = $1.25
+Total: $5.24
